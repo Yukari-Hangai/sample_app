@@ -4,9 +4,12 @@ class ListsController < ApplicationController
   end
 
   def create
-    list = List.new(list_params)#1.&2 データを受け取り新規登録するためのインスタンス作成
-    list.save#3 データをデータベースに保存するためのsaveメソッド実行
-    redirect_to list_path(list.id)#詳細画面へリダイレクト
+    @list = List.new(list_params)
+    if @list.save
+     redirect_to list_path(@list.id)
+    else
+      render :new
+    end
   end
 
   def index
@@ -27,8 +30,14 @@ class ListsController < ApplicationController
     redirect_to list_path(list.id)
   end
 
+  def destroy
+    list = List.find(params[:id]) #データ（レコード）を1件取得
+    list.destroy#データ（レコード）を削除
+    redirect_to '/lists'#投稿一覧画面へリダイレクト
+  end
+
   private#ストロングパラメータ
   def list_params
-    params.require(:list).permit(:title,:body)
+    params.require(:list).permit(:title,:body,:image)
   end
 end
